@@ -1,37 +1,30 @@
 
 obj-m += hello.o
 
-hello-objs += src/stubs/stubs.o
-hello-objs += nimcache/@mhello.nim.o
-hello-objs += nimcache/stdlib_allocators.nim.o
-hello-objs += nimcache/stdlib_io.nim.o
-hello-objs += nimcache/stdlib_system.nim.o
+NIM_SRC1 = $(wildcard $(M)/nimcache/*.c)
+NIM_SRC2 = $(subst $(src),,$(NIM_SRC1))
+NIM_OBJS = $(subst .c,.o,$(NIM_SRC2))
 
-NIM_C += $(src)/nimcache/@mhello.nim.c
-NIM_C += $(src)/nimcache/stdlib_allocators.nim.c
-NIM_C += $(src)/nimcache/stdlib_io.nim.c
-NIM_C += $(src)/nimcache/stdlib_system.nim.c
+hello-y += src/stubs/stubs.o $(NIM_OBJS)
 
-ccflags-y := -I$(src) -I$(src)/src/stubs -I/home/ico/external/Nim/lib/
+ccflags-y = -I$(src) -I$(src)/src/stubs -I/home/ico/external/Nim/lib/
 
-default:
+default: $(M)/nimcache/@mhello.nim.c
 	$(MAKE) -C $(KDIR) SUBDIRS=$(shell pwd) modules
 
 clean:
 	rm -rf nimcache *.ko* *.mod* *.o modules.order *.symvers *.a
 
-$(NIM_C): $(obj)/nimcache/@mhello.nim.c
-
-$(src)/nimcache/@mhello.nim.c: $(src)/src/hello.nim
+$(M)/nimcache/@mhello.nim.c: $(M)/src/hello.nim
 	nim c \
 		-c \
 		--gc:arc \
-		--nimcache:$(src)/nimcache \
+		--nimcache:$(M)/nimcache \
 		--noMain:On \
 		--os:ansic \
 		-d:useMalloc \
 		-d:danger \
 		-d:noSignalHandler \
-		$(src)/src/hello.nim
+		$(M)/src/hello.nim
 
 

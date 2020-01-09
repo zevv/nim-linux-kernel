@@ -7,7 +7,11 @@ FILE *stderr;
 
 size_t fwrite(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
-	printk(ptr);
+	size_t i;
+	char *p = ptr;
+	for(i=0; i<size*nmemb; i++) {
+		printk(KERN_CONT "%c", *p++);
+	}
 	return 0;
 }
 

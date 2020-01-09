@@ -2,8 +2,12 @@
 import linuxapi
 
 
+var a = newSeq[int](10)
+
 proc nim_init(): cint {.cdecl, exportc.} = 
-  echo "Hello"
+  a.add 42
+  echo "Hello ", $a
+  echo "Hophop\n"
 
 
 proc nim_exit() {.cdecl, exportc.} = 
